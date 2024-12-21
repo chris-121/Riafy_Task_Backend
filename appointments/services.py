@@ -19,6 +19,17 @@ def create_appointment(appointment):
     if not appointment or not isinstance(appointment, dict):
         raise ValidationError("Invalid data type. Expected a dictionary.")
 
+    date = appointment.get("date")
+    slot = appointment.get("slot")
+
+    # Ensure date and slot are provided
+    if not date or not slot:
+        raise ValidationError("Both date and slot must be provided.")
+
+    # Check if the slot already exists for the given date
+    if Appointment.objects.filter(date__date=date, slot=slot).exists():
+        raise ValidationError(f"Slot {slot} on {date} is already taken.")
+
     serializer = AppointmentSerializer(data=appointment)
     if serializer.is_valid():
         serializer.save()
