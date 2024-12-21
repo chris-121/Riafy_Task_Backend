@@ -1,12 +1,18 @@
 from rest_framework.exceptions import ValidationError
 from .models import Appointment
 from .serializers import AppointmentSerializer
+from .common.slots import SLOTS
 
 
-def get_all_appointments(date):
+def get_all_available_slots(date):
+    if not date:
+        raise ValidationError("Date must be provided.")
+
     appointments = Appointment.objects.filter(date__date=date)
-    serializer = AppointmentSerializer(appointments, many=True)
-    return serializer.data
+    booked_slots = appointments.values_list("slot", flat=True)
+    available_slots = [slot for slot in SLOTS if slot not in booked_slots]
+
+    return available_slots
 
 
 def create_appointment(appointment):

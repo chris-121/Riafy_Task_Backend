@@ -11,4 +11,5 @@ def handle_exception(e):
     elif isinstance(e, ValidationError):
         return {"Error": str(e), "Status": status.HTTP_400_BAD_REQUEST}
     else:
+        print(e)
         return {"Error": str(e), "Status": status.HTTP_500_INTERNAL_SERVER_ERROR}
